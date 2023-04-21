@@ -44,24 +44,36 @@ function handleInput(event) {
 function clearCountryList() {
   countryList.innerHTML = '';
 }
-
 function renderCountryList(countries) {
   countryList.innerHTML = '';
   countries.forEach(country => {
-    const flagImg = `<img src="${country.flags.svg}" alt="${country.name.official} flag" width="100">`;
-    const countryName = `<h2>${country.name.official}</h2>`;
-    const capital = `<p><strong>Capital:</strong> ${country.capital}</p>`;
-    const population = `<p><strong>Population:</strong> ${country.population}</p>`;
-    const languages = `<p><strong>Languages:</strong> ${country.languages.map(lang => lang.name).join(', ')}</p>`;
+    const languages = getLanguages(country);
 
-    const countryInfo = document.createElement('div');
-    countryInfo.classList.add('country-info');
-    countryInfo.innerHTML = `${flagImg} ${countryName} ${capital} ${population} ${languages}`;
-
-    const countryItem = document.createElement('li');
-    countryItem.classList.add('country-item');
-    countryItem.appendChild(countryInfo);
-
-    countryList.appendChild(countryItem);
+    const countryInfo = `
+      <div class="country-info">
+        <img src="${country.flags.svg}" alt="${country.name.official} flag" width="100">
+        <h2>${country.name.official}</h2>
+        <p><strong>Capital:</strong> ${country.capital}</p>
+        <p><strong>Population:</strong> ${country.population}</p>
+        <p><strong>Languages:</strong> ${languages}</p>
+      </div>
+    `;
+    
+    const countryItem = `
+      <li class="country-item">
+        ${countryInfo}
+      </li>
+    `;
+    countryList.insertAdjacentHTML('beforeend', countryItem);
   });
+}
+
+function getLanguages(country) {
+  let languages = country.languages;
+  if (languages && languages.length > 0) {
+    languages = languages.map(lang => lang.name).join(', ');
+  } else {
+    languages = '';
+  }
+  return languages;
 }
