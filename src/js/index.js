@@ -29,8 +29,8 @@ function handleInput(event) {
         clearCountryList();
         return;
       }
-      renderCountryList(data);
-    })
+      renderCountryListItems(data);
+    })    
     .catch(error => {
       console.log(error);
       if (error.status === 404) {
@@ -44,29 +44,41 @@ function handleInput(event) {
 function clearCountryList() {
   countryList.innerHTML = '';
 }
-function renderCountryList(countries) {
+function renderCountryListItems(countries) {
   countryList.innerHTML = '';
+  if (countries.length === 1) {
+    renderCountryDetails(countries[0]);
+    return;
+  }
   countries.forEach(country => {
-    const languages = getLanguages(country);
-
-    const countryInfo = `
-      <div class="country-info">
+    const countryItem = `
+      <li class="country-item" data-country-code="${country.alpha3Code}">
         <img src="${country.flags.svg}" alt="${country.name.official} flag" width="100">
         <h2>${country.name.official}</h2>
-        <p><strong>Capital:</strong> ${country.capital}</p>
-        <p><strong>Population:</strong> ${country.population}</p>
-        <p><strong>Languages:</strong> ${languages}</p>
-      </div>
-    `;
-    
-    const countryItem = `
-      <li class="country-item">
-        ${countryInfo}
       </li>
     `;
     countryList.insertAdjacentHTML('beforeend', countryItem);
   });
+  countryList.addEventListener('click', handleCountryClick);
 }
+
+
+function renderCountryDetails(country) {
+  const languages = getLanguages(country);
+
+  const countryInfo = `
+    <div class="country-info">
+      <img src="${country.flags.svg}" alt="${country.name.official} flag" width="100">
+      <h2>${country.name.official}</h2>
+      <p><strong>Capital:</strong> ${country.capital}</p>
+      <p><strong>Population:</strong> ${country.population}</p>
+      <p><strong>Languages:</strong> ${languages}</p>
+    </div>
+  `;
+    
+  countryList.innerHTML = countryInfo;
+}
+
 
 function getLanguages(country) {
   let languages = country.languages;
