@@ -41,10 +41,30 @@ function handleInput(event) {
     });
 }
 
+function handleCountryClick(event) {
+  const countryListItem = event.target.closest('.country-item');
+  if (countryListItem !== null) {
+    const countryCode = countryListItem.dataset.countryCode;
+    fetchCountryDetails(countryCode);
+  }
+}
+
+function fetchCountryDetails(countryCode) {
+  fetch(`https://restcountries.com/v3.1/alpha/${countryCode}`)
+    .then(response => response.json())
+    .then(data => renderCountryDetails(data))
+    .catch(error => {
+      console.log(error);
+      Notiflix.Notify.failure('Failed to fetch country details. Please try again later.');
+    });
+}
+
 function clearCountryList() {
   countryList.innerHTML = '';
 }
+
 function renderCountryListItems(countries) {
+  if (!countryList) return;
   countryList.innerHTML = '';
   if (countries.length === 1) {
     renderCountryDetails(countries[0]);
